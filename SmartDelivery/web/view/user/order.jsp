@@ -56,10 +56,10 @@
 	                </div>
 	              </div>
 	              
-	  
+	 
 	             <input type="hidden" name="order_wea">
 	             <input type="hidden" name="cx">
-	             <input type="hidden" name="cy">  
+	             <input type="hidden" name="cy">   
 	             
 	             
                 <div class="w-100"></div>
@@ -172,12 +172,14 @@
   var cy;
   var order_wea;
   var result2;
+  
+  
   function getLocation() {
 	  if (navigator.geolocation) { // GPS를 지원하면
 	    navigator.geolocation.getCurrentPosition(function(position) {
 	    	cx=position.coords.latitude; //37.12314654
 	    	cy=position.coords.longitude;
-	    	
+	    	alert(cx+' '+cy);
   		$('input[name="cx"]').val(cx);
 		$('input[name="cy"]').val(cy);
    
@@ -192,7 +194,25 @@
 		  ;
 	  }
 	}
-
+ 
+ 
+/*  function getLocation() {
+	  if (navigator.geolocation) { // GPS를 지원하면
+	    navigator.geolocation.getCurrentPosition(function(position) {
+	      alert(position.coords.latitude + ' ' + position.coords.longitude);
+	      $('input[name="cx"]').val(cx);
+		  $('input[name="cy"]').val(cy);
+	    }, function(error) {
+	      console.error(error);
+	    }, {
+	      enableHighAccuracy: false,
+	      maximumAge: 0,
+	      timeout: Infinity
+	    });
+	  } else {
+	    alert('GPS를 지원하지 않습니다');
+	  }
+ } */
   function getData(){
 		$.ajax({
 			url:'https://cors-anywhere.herokuapp.com/http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=',
@@ -233,7 +253,9 @@
 		$(document).ready(function(){
 			
 			getData();
-			getLocation();
+			/* getLocation(); */
+			 $('input[name="cx"]').val(37.501555599999996);
+		  $('input[name="cy"]').val(127.03944459999998);
 			var a = $('.price').text();
 			var price=a.replace('$','');
 			var b = $('.del_price').text();
