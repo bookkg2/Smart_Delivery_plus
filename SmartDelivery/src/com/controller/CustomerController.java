@@ -105,6 +105,12 @@ public class CustomerController {
 		ArrayList<Product> list;
 		try {
 			customer=cbiz.get(id);
+			if(customer==null) {
+				mv.addObject("center", "user/login");
+				mv.setViewName("index");
+				return mv;
+			}
+			
 			System.out.println(customer.toString());
 			if(pwd.equals(customer.getCustomer_pwd())) {
 				session.setAttribute("loginuser", customer);
