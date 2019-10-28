@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vo.Status;
+
 public interface StDependenciesBiz<K,V> {
 	@Transactional
 	public void register(V v) throws Exception;

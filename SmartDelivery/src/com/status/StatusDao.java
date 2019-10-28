@@ -45,5 +45,7 @@ public class StatusDao implements StDependenciesDao<String, Status> {
 		// TODO Auto-generated method stub
 		return sm.selectpos(k);
 	}
+
+	
 	
 }

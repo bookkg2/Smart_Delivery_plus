@@ -43,7 +43,11 @@ public class StatusBiz implements StDependenciesBiz<String, Status> {
 
 	@Override
 	public Status selectpos(String k) throws Exception {
+		// TODO Auto-generated method stub
 		return dao.selectpos(k);
 	}
+
+
+
 
 }
