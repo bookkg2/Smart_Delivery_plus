@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.PictureMapper">
+	
+	<select id="select" parameterType="String" 
+	resultType="status">
+		SELECT * FROM STATUS WHERE CAR_ID=#{car_id}
+	</select>
+	<select id="selectall" resultType="status">
+		SELECT * FROM STATUS
+	</select>
+		
+	<insert id="insert" parameterType="3status">
+		INSERT INTO STATUS VALUES
+		(#{car_id},#{car_num},#{driver_name},#{driver_phone},#{car_x},#{car_y},#{car_temper},#{car_humid},#{car_pic},#{car_impact},SYSDATE)
+	</insert>
+	<update id="update" parameterType="status">
+		UPDATE STATUS SET CAR_ID=#{car_id},CAR_NUM=#{car_num},DRIVER_NAME=#{driver_name},DRIVER_PHONE=#{driver_phone},CAR_X=#{car_x},CAR_Y=#{car_y}
+		,CAR_TEMPER=#{car_temper},CAR_HUMID=#{car_humid},CAR_PIC=#{car_pic},CAR_IMPACT=#{car_impact},SYSDATE
+		 WHERE CAR_ID=#{car_id}
+	</update>
+	<delete id="delete" parameterType="String">
+		DELETE FROM STATUS WHERE CAR_ID=#{car_id}
+	</delete>
+	
+</mapper>
