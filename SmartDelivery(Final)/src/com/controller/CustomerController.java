@@ -106,6 +106,8 @@ public class CustomerController {
 		try {
 			customer=cbiz.get(id);
 			System.out.println(customer.toString());
+			System.out.println("customerpwd:"+pwd);
+			System.out.println("pwd:"+customer.getCustomer_pwd());
 			if(pwd.equals(customer.getCustomer_pwd())) {
 				session.setAttribute("loginuser", customer);
 				
@@ -116,10 +118,10 @@ public class CustomerController {
 				} catch (Exception e) {	
 					e.printStackTrace();
 				}
-				
 				mv.addObject("center","user/shop");
 				mv.setViewName("index");
 			}else {
+			//	System.out.println("11111111111111");
 				mv.addObject("center", "user/login");
 				mv.setViewName("index");
 			}
@@ -142,7 +144,7 @@ public class CustomerController {
 		return mv;
 	}
 	
-	@RequestMapping("dashboard.del")
+	@RequestMapping("/dashboard.del")
 	public ModelAndView dashboard(ModelAndView mv,
 			HttpSession session) {
 		
@@ -150,7 +152,5 @@ public class CustomerController {
 		mv.setViewName("index");
 		return mv;
 	}
-	
-	
 	
 }

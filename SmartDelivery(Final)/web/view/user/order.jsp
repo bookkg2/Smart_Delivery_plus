@@ -42,7 +42,7 @@
 	  
 	             <input type="hidden" name="order_wea">
 	             <input type="hidden" name="cx">
-	             <input type="hidden" name="cy">  
+	             <input type="hidden" name="cy"> 
 	             
 	             
                 <div class="w-100"></div>
@@ -81,7 +81,7 @@
 		    					<hr>
 		    					<p class="d-flex total-price">
 		    						<span>총 가격</span>
-		    						<span class="total_price" ></span>
+		    						<span class="total_price"></span>
 		    					</p>
 								</div>
 	          	</div>
@@ -156,7 +156,6 @@
   var order_wea;
   var result2;
 
-  
   function getLocation() {
 	  if (navigator.geolocation) { // GPS를 지원하면
 	    navigator.geolocation.getCurrentPosition(function(position) {
@@ -165,18 +164,20 @@
 	    	
   		$('input[name="cx"]').val(cx);
 		$('input[name="cy"]').val(cy);
-   
 	    }, function(error) {
 	      console.error(error);
-
+	    }, {
 	      enableHighAccuracy: false,
 	      maximumAge: 0,
 	      timeout: Infinity
 	    });
 	  } else {
-		  ;
+	    alert('GPS를 지원하지 않습니다');
 	  }
 	}
+  
+  
+ 
 
   function getData(){
 		$.ajax({
@@ -208,7 +209,6 @@
 			
 				order_wea=temp+wfKor;
 				$('input[name="order_wea"]').val(order_wea);
-				alert(order_wea);
 				return false;
 			}
 		});
@@ -226,6 +226,7 @@
 			var del_price=b.replace('$','');
 			
 			eval("result2="+price+"+"+del_price+";");
+			
 			$('.total_price').text('$'+result2);		
 	
 			$('input[name="order_price"]').val(result2);

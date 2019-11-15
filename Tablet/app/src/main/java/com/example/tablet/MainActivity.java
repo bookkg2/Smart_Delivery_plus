@@ -36,6 +36,9 @@ import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapPolyLine;
 import com.skt.Tmap.TMapView;
+
+import java.io.BufferedOutputStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 import java.io.DataInputStream;
@@ -51,6 +54,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+
 
 public class MainActivity extends AppCompatActivity {
     Button button_on;
@@ -72,12 +77,17 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.INTERNET
     };
     //add map setting end
+    private InputStream in;
+    private OutputStream out;
 
     boolean flag = true;
     public static String str;
     Server server = null;
     Socket socket, socket2;
     //Map<String, String> nickMap = new HashMap<>();
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,11 +122,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String url = "70.12.228.242";
-        int port = 8888;
-        Wreceiver wreceiver = null;
-        wreceiver = new Wreceiver(url, port);
-        wreceiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
         button_off.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 int ip = wifiInfo.getIpAddress();
                 String ipAddress = Formatter.formatIpAddress(ip);
                 Log.d("ip*******", ipAddress);
+
             }
         });
     }
@@ -209,6 +217,13 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+    public MainActivity() {
+    }
+
+
+
+
+
 
 
     public String getCurrentAddress(double latitude, double longitude){
@@ -328,12 +343,60 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void clickbt(View view){
-        String data = textView.getText().toString();
-        String url = "http://70.12.60.98/test/webchat?data="+data;
-        HttpTask httpTask = new HttpTask(url);
-        Log.d("data =====",data);
-        httpTask.execute();
+
+
+    private class SerialWriter implements Runnable {
+        String data;
+
+        public SerialWriter() {
+            // 나 참가할게 메세지임.
+            // 이걸 안 해주면 안 됨.
+            this.data = ":G11A9\r";
+        }
+
+        public SerialWriter(String serialData) {
+            /*
+             * W28: 데이터를 쏘겠다는 뜻 W28 00000000 000000000000 id data :W28 00000000 000000000000
+             * 53 \r
+             */
+            String sdata = sendDataFormat(serialData);
+            System.out.println(sdata);
+            this.data = sdata;
+        }
+
+        public String sendDataFormat(String serialData) {
+            serialData = serialData.toUpperCase();
+            char c[] = serialData.toCharArray();
+            int cdata = 0;
+            for (char cc : c) {
+                cdata += cc;
+            }
+
+            // 비트연산
+            System.out.println("before 0xff : " + cdata);
+            cdata = (cdata & 0xFF);
+            System.out.println("after 0xff : " + cdata);
+
+            String returnData = ":";
+            returnData += serialData + Integer.toHexString(cdata).toUpperCase();
+            returnData += "\r";
+            return returnData;
+        }
+
+        public void run() {
+            try {
+                byte[] inputData = data.getBytes();
+                out.write(inputData);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void sendData(String data) {
+        SerialWriter sw = new SerialWriter(data);
+        new Thread(sw).start();
     }
 
     class HttpTask extends AsyncTask<String,Void,String>{
@@ -368,10 +431,13 @@ public class MainActivity extends AppCompatActivity {
     class Server {
         boolean flag = true;
         boolean rflag = true;
+
+        BufferedOutputStream oos;
         Map<String,DataOutputStream> map= new HashMap<>();
         Map<String, String> nickMap = new HashMap<>();
         ServerSocket serverSocket;
-
+        OutputStream out2;
+        DataOutputStream dout;
         public Server() {}
 
         public Server(int port) throws IOException {
@@ -386,7 +452,6 @@ public class MainActivity extends AppCompatActivity {
                             socket = serverSocket.accept();
                             System.out.println(socket.toString());
                             new Receiver(socket).start();
-                            System.out.println(socket.getInetAddress());
                         }
                         System.out.println("Server End..");
                     } catch (Exception e) {
@@ -396,35 +461,39 @@ public class MainActivity extends AppCompatActivity {
             };
             new Thread(r).start();
         }
-        //        public void start() throws IOException {
-//            Scanner sc =
-//                    new Scanner(System.in);
-//            boolean sflag = true;
-//            while(sflag) {
-//                System.out.println("Input Msg.");
-//                String str =sc.next();
-//                sendMsg(str);
-//                if(str.equals("q")) {
-//                    break;
-//                }
-//            }
-//            sc.close();
-//        }
 
-        public void sendMsg(String msg) {
+
+        public void sendMsg() throws IOException  {
             Sender sender = new Sender();
-            sender.setMsg(msg);
+            //sender.setMsg(msg);
             sender.start();
         }
         class Sender extends Thread{
             String msg;
+            //OutputStream out;
+            DataOutputStream dout;
 
+            {
+                try {
+                    dout = new DataOutputStream(socket.getOutputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            ;
+
+
+            public void Sender() {
+
+
+            }
             public void setMsg(String msg) {
                 this.msg = msg;
             }
 
             public void run() {
-                Collection<DataOutputStream>
+                /*Collection<DataOutputStream>
                         col = map.values();
                 Iterator<DataOutputStream>
                         it = col.iterator();
@@ -434,7 +503,13 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }*/
+                try {
+                    dout.writeUTF("saf");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
             }
         }
 
@@ -442,8 +517,7 @@ public class MainActivity extends AppCompatActivity {
             Socket socket;
             InputStream in;
             DataInputStream din;
-            OutputStream out;
-            DataOutputStream dout;
+
             String ip;
 
             public Receiver(Socket socket) throws Exception {
@@ -456,10 +530,12 @@ public class MainActivity extends AppCompatActivity {
                 ip = socket.getInetAddress().toString();
                 map.put(ip, dout);
                 System.out.println("map1"+map.size());
+                sendMsg();
             }
 
             public void run() {
                 try {
+
                     while(rflag) {
                         str = din.readUTF();
                         //string ?섎닠??蹂???좊떦?댁＜湲?
@@ -477,8 +553,8 @@ public class MainActivity extends AppCompatActivity {
 
                         textView.setText(str);
 
-                        System.out.println(str);
-                        sendMsg(str);
+                        Log.d("str=================", str);
+                        //sendMsg(str);
                     }
                 }catch(Exception e) {
                     //e.printStackTrace();
@@ -505,133 +581,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class Wsender extends AsyncTask<String, Object, String>{
-        OutputStream out = null;
-        ObjectOutputStream oos = null;
-        String msg;
-        User user = null;
-        public Wsender(Socket socket){
-            try {
-                out = socket2.getOutputStream();
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }
 
-        public void setUser(User user){
-            this.user = user;
-        }
 
-        public void setMsg(String msg){
-            this.msg = msg;
-        }
 
-        @Override
-        protected void onPreExecute() {
-            textView.append(this.user.toString()+"\n");
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-        }
-
-        @Override
-        protected void onProgressUpdate(Object... values) {
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            try{
-                Log.d("book", "error wsender");
-                Log.d("book",user.getMsg());
-                oos = new ObjectOutputStream(out);
-                oos.writeObject(user);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-    class Wreceiver extends AsyncTask<String, Object, String>{
-        InputStream in = null;
-        DataInputStream din = null;
-        String ip;
-        Integer port;
-        String str1;
-
-        public Wreceiver() {
-        }
-
-        public Wreceiver(String ip, Integer port) {
-            this.ip = ip;
-            this.port = port;
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-        }
-
-        @Override
-        protected void onProgressUpdate(Object... values) {
-            socket2 = (Socket)values[0];
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            boolean flag = true;
-            while(flag){
-                try {
-                    socket2 = new Socket(ip, port);
-                    publishProgress(socket2);
-                    in = socket2.getInputStream();
-                    din = new DataInputStream(in);
-                    if(socket2 != null && socket2.isConnected()){
-                        break;
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                    System.out.println("RETRY");
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }//end while
-            while(flag){
-                try {
-                    try {
-                        str1 = din.readUTF();
-                    }catch (EOFException e){
-                        str1 = "no";
-                        break;
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            textView.append(str1+"\n");
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return str1;
-        }
-    }
-
-    public void sentData(View view){
-        try {
-            Wsender wsender = null;
-            wsender = new Wsender(socket2);
-            wsender.setUser(new User(socket2.getLocalAddress().toString(), "ID101", "q"));
-            wsender.execute();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 }

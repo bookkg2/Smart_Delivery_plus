@@ -28,7 +28,7 @@ public class LogAdvisor {
 	@AfterReturning(pointcut="execution(* com.controller.CustomerController.loginimpl(..))",
 			returning="obj")
 	public void sessionLogging(JoinPoint jp, Object obj) {
-		// User 정상 로그인 후 session에서 loginuser attribute를 받아와 로그인 한 유저의 닉네임 로깅
+		// User �젙�긽 濡쒓렇�씤 �썑 session�뿉�꽌 loginuser attribute瑜� 諛쏆븘�� 濡쒓렇�씤 �븳 �쑀���쓽 �땳�꽕�엫 濡쒓퉭
 		HttpSession session = null;
 		
 		for(Object object : jp.getArgs()) {
@@ -40,21 +40,9 @@ public class LogAdvisor {
 		Customer loginuser = (Customer)session.getAttribute("loginuser");
 		
 		user_log.debug("user : " + loginuser.getCustomer_id() +" logged in.");
+		System.out.println("user : " + loginuser.getCustomer_id() +" logged in.");
 	}
 	
-//	@AfterReturning(pointcut="execution(* com.controller.OrderController.productorder(..))",
-//			returning="obj")
-//	public void productLogging(JoinPoint jp, Object obj) {
-//		
-//		System.out.println("order(target) : "+obj.toString());
-//		ModelAndView mv=(ModelAndView) obj;
-//	    
-//		System.out.println(mv.getModel().toString());
-//		Product product=(Product) mv.getModel().get("p");
-//		
-//		work_log.debug(product.getProduct_name()+","+product.getProduct_price());
-//	}
-//	
 
 	@AfterReturning(pointcut="execution(* com.controller.OrderController.orderdetail(..))",
 			returning="obj")
@@ -65,11 +53,9 @@ public class LogAdvisor {
 		
 		System.out.println(mv.getModel().toString());
 		Product product=(Product) mv.getModel().get("p");
-		
 		work_log.debug(product.getProduct_name()+" , "+product.getProduct_price()+" , "+order.getOrder_wea());
+		System.out.println(product.getProduct_name()+" , "+product.getProduct_price()+" , "+order.getOrder_wea());
 		
-		
-//		data_log.debug(order.getOrder_wea());
 	}
 	
 	

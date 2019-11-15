@@ -38,13 +38,13 @@ public class OrderController {
 		if(customer!=null) {
 			try {
 				Product product=pbiz.get(product_id);
-				System.out.println(product.toString());
+				//System.out.println(product.toString());
 				mv.addObject("p",product);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			
+	
 			mv.addObject("center", "user/order");
 			mv.setViewName("index");
 		}
@@ -57,9 +57,9 @@ public class OrderController {
 	
 	@RequestMapping("/orderdetail.del")
 	public ModelAndView orderdetail(ModelAndView mv,Order order,String product_id, HttpSession session) {
-		System.out.println(product_id);
+		//System.out.println(product_id);
 
-		System.out.println(order.toString());
+		//System.out.println(order.toString());
 		Calendar calendar = Calendar.getInstance();
         java.util.Date date = calendar.getTime();
         String today = (new SimpleDateFormat("HH:mm:ss").format(date));
@@ -84,7 +84,7 @@ public class OrderController {
 			Customer customer=(Customer)session.getAttribute("loginuser");
 			order.setCustomer_id(customer.getCustomer_id());
 			order.setCurrent_time(today);
-			System.out.println(order.toString());
+			//System.out.println(order.toString());
 
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -94,7 +94,7 @@ public class OrderController {
 		
 		try {
 			Product product1=pbiz.get(product_id);
-			System.out.println("prd:"+product1.toString());
+		//	System.out.println("prd:"+product1.toString());
 			obiz.register(order);
 			
 			
@@ -121,10 +121,10 @@ public class OrderController {
 			Status status=sbiz.selectpos(order.getOrder_id());
 //			System.out.println(status.toString());
 
-			System.out.println(order.toString());
-			System.out.println(product.toString());
+			//System.out.println(order.toString());
+			//System.out.println(product.toString());
 			if(status!=null) {
-				System.out.println(status.toString());
+				//System.out.println(status.toString());
 				mv.addObject("s",status);
 			}
 			

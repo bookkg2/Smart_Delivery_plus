@@ -59,7 +59,7 @@
 	            <li class="nav-item active"><a href="productlist.del" class="nav-link">Shop</a></li>
 	          <c:choose>
 				<%--  <c:when test="${loginuser != null }"> --%>
-			 <c:when test="${loginuser.ADMIN_CHECK eq '1'.charAt(0) }">
+			 <c:when test="${loginuser.admin_check eq '1'.charAt(0) }">
 			
 	                 <li class="nav-item"><a href="logout.del" class="nav-link">Logout</a></li>
 	                 <!-- 로그인한 후에만 들어갈 수 있게 해야 함  -->
@@ -71,7 +71,7 @@
 					  
 				 </c:when>
 				 
-			<c:when test="${loginuser.ADMIN_CHECK eq null }">
+			<c:when test="${loginuser.admin_check eq null }">
 					<li class="nav-item"><a href="customerjoin.del" class="nav-link">Join</a></li>
 	              	<li class="nav-item"><a href="customerlogin.del" class="nav-link">Login</a></li>
 	          		<li class="nav-item"><a href="customerabout.del" class="nav-link">About</a></li>
